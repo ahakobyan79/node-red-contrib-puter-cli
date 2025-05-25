@@ -1,0 +1,36 @@
+{
+  "name": "node-red-contrib-puter-cli",
+  "version": "0.1.0",
+  "description": "Node-RED nodes to interact with Puter cloud platform via Puter CLI",
+  "keywords": [
+    "node-red",
+    "puter",
+    "cloud",
+    "storage",
+    "file-management"
+  ],
+  "license": "MIT",
+  "author": "",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "node-red": {
+    "nodes": {
+      "puter-auth": "nodes/puter-auth.js",
+      "puter-upload": "nodes/puter-upload.js",
+      "puter-download": "nodes/puter-download.js",
+      "puter-list": "nodes/puter-list.js",
+      "puter-delete": "nodes/puter-delete.js"
+    }
+  },
+  "dependencies": {
+    "execa": "^5.1.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/node-red-contrib-puter-cli"
+  }
+}

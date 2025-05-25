@@ -1,0 +1,61 @@
+<script type="text/javascript">
+    RED.nodes.registerType('puter-list', {
+        category: 'puter',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value: ""},
+            auth: {type: "puter-auth", required: true},
+            remotePath: {value: "/"}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "list.png",
+        label: function() {
+            return this.name || "Puter List";
+        },
+        paletteLabel: "list"
+    });
+</script>
+
+<script type="text/html" data-template-name="puter-list">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-auth"><i class="fa fa-lock"></i> Authentication</label>
+        <input type="text" id="node-input-auth">
+    </div>
+    <div class="form-row">
+        <label for="node-input-remotePath"><i class="fa fa-cloud"></i> Remote Path</label>
+        <input type="text" id="node-input-remotePath" placeholder="/path/in/puter">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="puter-list">
+    <p>Lists files and directories in Puter cloud storage using Puter CLI.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">string</span></dt>
+        <dd>If provided, overrides the configured remote path with the path to list.</dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>
+            <ul>
+                <li><b>success</b>: boolean indicating if the operation was successful</li>
+                <li><b>command</b>: the command that was executed (list)</li>
+                <li><b>remotePath</b>: the remote path that was listed</li>
+                <li><b>files</b>: array of file objects with details about each file/directory</li>
+                <li><b>stdout</b>: standard output from the Puter CLI command</li>
+                <li><b>stderr</b>: standard error from the Puter CLI command</li>
+                <li><b>error</b>: error message if the operation failed</li>
+            </ul>
+        </dd>
+    </dl>
+    <h3>Details</h3>
+    <p>This node uses the Puter CLI to list files and directories in your Puter cloud storage. The output includes detailed information about each file or directory in the specified path.</p>
+    <p>If you provide a path in <code>msg.payload</code>, it will override the configured remote path.</p>
+    <p>Requires Puter CLI to be installed on the system running Node-RED. Install with <code>npm install -g @puter/cli</code>.</p>
+</script>

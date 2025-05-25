@@ -1,0 +1,60 @@
+<script type="text/javascript">
+    RED.nodes.registerType('puter-delete', {
+        category: 'puter',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value: ""},
+            auth: {type: "puter-auth", required: true},
+            remotePath: {value: ""}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "trash.png",
+        label: function() {
+            return this.name || "Puter Delete";
+        },
+        paletteLabel: "delete"
+    });
+</script>
+
+<script type="text/html" data-template-name="puter-delete">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-auth"><i class="fa fa-lock"></i> Authentication</label>
+        <input type="text" id="node-input-auth">
+    </div>
+    <div class="form-row">
+        <label for="node-input-remotePath"><i class="fa fa-cloud"></i> Remote Path</label>
+        <input type="text" id="node-input-remotePath" placeholder="/path/in/puter">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="puter-delete">
+    <p>Deletes files or directories from Puter cloud storage using Puter CLI.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">string</span></dt>
+        <dd>If provided, overrides the configured remote path with the path to delete.</dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>
+            <ul>
+                <li><b>success</b>: boolean indicating if the operation was successful</li>
+                <li><b>command</b>: the command that was executed (delete)</li>
+                <li><b>remotePath</b>: the remote path that was deleted</li>
+                <li><b>stdout</b>: standard output from the Puter CLI command</li>
+                <li><b>stderr</b>: standard error from the Puter CLI command</li>
+                <li><b>error</b>: error message if the operation failed</li>
+            </ul>
+        </dd>
+    </dl>
+    <h3>Details</h3>
+    <p>This node uses the Puter CLI to delete files or directories from your Puter cloud storage. The operation is performed with the --force flag to avoid confirmation prompts.</p>
+    <p>If you provide a path in <code>msg.payload</code>, it will override the configured remote path.</p>
+    <p>Requires Puter CLI to be installed on the system running Node-RED. Install with <code>npm install -g @puter/cli</code>.</p>
+</script>
