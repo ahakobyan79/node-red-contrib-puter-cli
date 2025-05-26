@@ -20,11 +20,14 @@
       "puter-upload": "nodes/puter-upload.js",
       "puter-download": "nodes/puter-download.js",
       "puter-list": "nodes/puter-list.js",
-      "puter-delete": "nodes/puter-delete.js"
+      "puter-delete": "nodes/puter-delete.js",
+      "puter-mkdir": "nodes/puter-mkdir.js",
+      "puter-mv": "nodes/puter-mv.js"
     }
   },
   "dependencies": {
-    "execa": "^5.1.1"
+    "execa": "^5.1.1",
+    "puter-cli": "^1.8.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

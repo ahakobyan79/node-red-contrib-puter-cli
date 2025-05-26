@@ -1,0 +1,68 @@
+<script type="text/javascript">
+    RED.nodes.registerType('puter-mkdir', {
+        category: 'puter',
+        color: '#a6bbcf', // Standard Puter node color
+        defaults: {
+            name: {value: ""},
+            auth: {type: "puter-auth", required: true},
+            remotePath: {value: ""}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "fa-folder-plus", // Using Font Awesome icon for "add folder"
+        label: function() {
+            return this.name || "Puter Mkdir";
+        },
+        paletteLabel: "mkdir"
+    });
+</script>
+
+<script type="text/html" data-template-name="puter-mkdir">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-auth"><i class="fa fa-lock"></i> Authentication</label>
+        <input type="text" id="node-input-auth">
+    </div>
+    <div class="form-row">
+        <label for="node-input-remotePath"><i class="fa fa-cloud"></i> Remote Path</label>
+        <input type="text" id="node-input-remotePath" placeholder="/path/to/new_directory">
+    </div>
+    <div class="form-tips">
+        <b>Tip:</b> The remote path should be the full path to the directory you want to create, e.g., <code>/myfiles/new_folder</code>.
+    </div>
+</script>
+
+<script type="text/html" data-help-name="puter-mkdir">
+    <p>Creates a new directory in Puter cloud storage using the Puter CLI.</p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">string</span></dt>
+        <dd>If provided, this string value overrides the configured <b>Remote Path</b> for the directory to be created.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>
+            An object containing the results of the operation.
+            <ul>
+                <li><b>success</b>: (boolean) True if the directory was created successfully, false otherwise.</li>
+                <li><b>command</b>: (string) The command executed (<code>mkdir</code>).</li>
+                <li><b>remotePath</b>: (string) The remote path of the directory that was attempted to be created.</li>
+                <li><b>stdout</b>: (string) The standard output from the Puter CLI command, if any.</li>
+                <li><b>stderr</b>: (string) The standard error from the Puter CLI command, if any.</li>
+                <li><b>error</b>: (string) An error message if the operation failed. Included only if <code>success</code> is false.</li>
+            </ul>
+        </dd>
+    </dl>
+
+    <h3>Details</h3>
+    <p>This node uses the <code>puter mkdir &lt;remotePath&gt;</code> command to create a new directory at the specified path in your Puter cloud storage.</p>
+    <p>You must configure valid Puter authentication using the <b>Puter Auth</b> configuration node.</p>
+    <p>The <b>Remote Path</b> should be a full path, e.g., <code>/data/new_projects</code>. If the parent directories do not exist, the <code>puter mkdir</code> command might fail unless it supports recursive creation (like <code>mkdir -p</code>). The current implementation does not explicitly add a recursive flag, so ensure parent paths exist or that the CLI handles this by default if needed.</p>
+    <p>Requires the Puter CLI to be installed and accessible in the environment where Node-RED is running.</p>
+</script>

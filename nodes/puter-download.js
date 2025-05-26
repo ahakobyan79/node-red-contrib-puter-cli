@@ -27,12 +27,12 @@ module.exports = function(RED) {
                     PUTER_TOKEN: node.auth.credentials.apiToken
                 };
                 
-                // Execute Puter CLI download command
-                const result = await execa('puter', ['download', remotePath, localPath], { env });
+                // Execute Puter CLI copy command (cp <remote_src> <local_dest>)
+                const result = await execa('puter', ['cp', remotePath, localPath], { env });
                 
                 msg.payload = {
                     success: true,
-                    command: 'download',
+                    command: 'cp', // Changed from 'download' to 'cp'
                     remotePath: remotePath,
                     localPath: localPath,
                     stdout: result.stdout,
@@ -46,7 +46,7 @@ module.exports = function(RED) {
                 msg.payload = {
                     success: false,
                     error: error.message,
-                    command: 'download'
+                    command: 'cp' // Changed from 'download' to 'cp'
                 };
                 node.status({fill:"red", shape:"ring", text:"failed"});
                 node.send(msg);

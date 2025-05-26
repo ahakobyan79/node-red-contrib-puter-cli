@@ -4,69 +4,94 @@ A Node-RED package that integrates with the Puter CLI to interact with the Puter
 
 ## Description
 
-This package provides Node-RED nodes to interact with the Puter cloud platform using the Puter CLI. It allows you to:
+This package provides Node-RED nodes to interact with the Puter cloud platform using the Puter CLI. It allows you to perform various file and directory operations, including:
 
-- Upload files to Puter cloud storage
-- Download files from Puter cloud storage
-- List files and directories in Puter cloud storage
-- Delete files and directories from Puter cloud storage
+- Authenticating with your Puter account.
+- Uploading files and directories to Puter cloud storage.
+- Downloading files and directories from Puter cloud storage.
+- Listing files and directories.
+- Deleting files and directories.
+- Creating new directories.
+- Moving or renaming files and directories.
 
 ## Prerequisites
 
-- [Node-RED](https://nodered.org/) installed
-- [Puter CLI](https://github.com/HeyPuter/puter-cli) installed globally: `npm install -g @puter/cli`
-- A Puter account and API token (obtained via `puter login`)
+- [Node-RED](https://nodered.org/) installed.
+- [Puter CLI](https://github.com/HeyPuter/puter-cli) installed globally. This is essential for the nodes to function.
+  ```bash
+  npm install -g @puter/cli
+  ```
+- A Puter account. You will need to log in via the Puter CLI at least once (`puter login`) to authorize it for use with your account and to obtain your API token.
 
 ## Installation
 
-Install from the Node-RED Palette Manager, or run the following command in your Node-RED user directory:
+Install `node-red-contrib-puter-cli` from the Node-RED Palette Manager by searching for its name, or install it manually by running the following command in your Node-RED user directory (typically `~/.node-red`):
 
 ```bash
 npm install node-red-contrib-puter-cli
 ```
+Restart Node-RED after installation.
 
-## Usage
+## Nodes
 
-### Authentication
+This package includes the following nodes:
 
-1. Add a "puter-auth" configuration node to your flow
-2. Enter your Puter API token (obtain it by running `puter login` in your terminal)
+### 1. Puter Auth (`puter-auth`)
+- **Purpose**: Configuration node to store your Puter API token securely. This node is used by all other `puter-*` nodes to authenticate with the Puter platform.
+- **Setup**:
+    1. Add a `puter-auth` configuration node (usually done when configuring another Puter node for the first time).
+    2. Enter your Puter API token. You can obtain this token by running `puter token show` or `puter token` in your terminal after logging in with `puter login`.
 
-### Upload Files
+### 2. Puter List (`puter-list`)
+- **Purpose**: Lists files and directories at a specified remote path in your Puter storage.
+- **CLI Command**: `puter ls <remotePath> --json`
+- **Configuration**:
+    - `Authentication`: Link to your `puter-auth` configuration node.
+    - `Remote Path`: The path in Puter to list (e.g., `/documents`). Defaults to `/`. Can be overridden by `msg.payload`.
+- **Output**: `msg.payload.files` will contain an array of file/directory objects.
 
-1. Add a "puter-upload" node to your flow
-2. Configure the node with your Puter authentication
-3. Set the local path of the file or directory to upload
-4. Set the remote path where the file should be stored in Puter
+### 3. Puter Upload (`puter-upload`)
+- **Purpose**: Uploads a local file or directory to a specified remote path in Puter.
+- **CLI Command**: `puter cp <localPath> <remotePath>`
+- **Configuration**:
+    - `Authentication`: Link to your `puter-auth` node.
+    - `Local Path`: Path to the local file or directory to upload. Can be overridden by `msg.payload` (if string) or `msg.payload.localPath` (if object).
+    - `Remote Path`: The destination path in Puter (e.g., `/backups/`). Defaults to `/`. Can be overridden by `msg.remotePath` or `msg.payload.remotePath`.
 
-You can also provide the local path in `msg.payload` and the remote path in `msg.remotePath`.
+### 4. Puter Download (`puter-download`)
+- **Purpose**: Downloads a file or directory from Puter to a local path.
+- **CLI Command**: `puter cp <remotePath> <localPath>`
+- **Configuration**:
+    - `Authentication`: Link to your `puter-auth` node.
+    - `Remote Path`: The path of the file/directory in Puter to download. Can be overridden by `msg.payload` (if string) or `msg.payload.remotePath`.
+    - `Local Path`: The local path where the file/directory should be saved. Defaults to `.` (Node-RED's current working directory). Can be overridden by `msg.localPath` or `msg.payload.localPath`.
 
-### Download Files
+### 5. Puter Delete (`puter-delete`)
+- **Purpose**: Deletes a file or directory from Puter storage.
+- **CLI Command**: `puter rm <remotePath> --force` (Note: `--force` is always used to prevent interactive prompts).
+- **Configuration**:
+    - `Authentication`: Link to your `puter-auth` node.
+    - `Remote Path`: The path of the file/directory in Puter to delete. Can be overridden by `msg.payload`.
 
-1. Add a "puter-download" node to your flow
-2. Configure the node with your Puter authentication
-3. Set the remote path of the file or directory to download
-4. Set the local path where the file should be saved
+### 6. Puter Mkdir (`puter-mkdir`)
+- **Purpose**: Creates a new directory at a specified remote path in Puter.
+- **CLI Command**: `puter mkdir <remotePath>`
+- **Configuration**:
+    - `Authentication`: Link to your `puter-auth` node.
+    - `Remote Path`: The full path of the new directory to create in Puter (e.g., `/my_new_folder`). Can be overridden by `msg.payload`.
 
-You can also provide the remote path in `msg.payload` and the local path in `msg.localPath`.
+### 7. Puter Mv (`puter-mv`)
+- **Purpose**: Moves or renames a file or directory within your Puter storage.
+- **CLI Command**: `puter mv <sourcePath> <destinationPath>`
+- **Configuration**:
+    - `Authentication`: Link to your `puter-auth` node.
+    - `Source Path`: The current path of the file/directory in Puter to move/rename. Can be overridden by `msg.payload.sourcePath`, `msg.sourcePath`, or `msg.payload` (if string and source path config is empty).
+    - `Destination Path`: The new path or name for the file/directory in Puter. Can be overridden by `msg.payload.destinationPath` or `msg.destinationPath`.
 
-### List Files
-
-1. Add a "puter-list" node to your flow
-2. Configure the node with your Puter authentication
-3. Set the remote path to list
-
-You can also provide the remote path in `msg.payload`.
-
-### Delete Files
-
-1. Add a "puter-delete" node to your flow
-2. Configure the node with your Puter authentication
-3. Set the remote path of the file or directory to delete
-
-You can also provide the remote path in `msg.payload`.
 
 ## Example Flow
+
+(The example flow demonstrating `puter-upload` can be kept here or expanded if desired. For brevity, it's fine as is for now.)
 
 ```json
 [
@@ -74,10 +99,10 @@ You can also provide the remote path in `msg.payload`.
         "id": "f6f2187d.f17ca8",
         "type": "puter-upload",
         "z": "2b9467e2.2165e8",
-        "name": "",
+        "name": "Upload My File",
         "auth": "3fa97b10.3a9954",
-        "localPath": "/path/to/local/file.txt",
-        "remotePath": "/",
+        "localPath": "/path/to/your/local/file.txt",
+        "remotePath": "/uploads/",
         "x": 340,
         "y": 120,
         "wires": [

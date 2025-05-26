@@ -1,0 +1,87 @@
+<script type="text/javascript">
+    RED.nodes.registerType('puter-mv', {
+        category: 'puter',
+        color: '#a6bbcf', // Standard Puter node color
+        defaults: {
+            name: {value: ""},
+            auth: {type: "puter-auth", required: true},
+            sourcePath: {value: ""},
+            destinationPath: {value: ""}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "fa-file-export", // Font Awesome icon (export can signify moving)
+        label: function() {
+            return this.name || "Puter Mv";
+        },
+        paletteLabel: "mv"
+    });
+</script>
+
+<script type="text/html" data-template-name="puter-mv">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-auth"><i class="fa fa-lock"></i> Authentication</label>
+        <input type="text" id="node-input-auth">
+    </div>
+    <div class="form-row">
+        <label for="node-input-sourcePath"><i class="fa fa-file-import"></i> Source Path</label>
+        <input type="text" id="node-input-sourcePath" placeholder="/path/to/source_file_or_dir">
+    </div>
+    <div class="form-row">
+        <label for="node-input-destinationPath"><i class="fa fa-file-export"></i> Destination Path</label>
+        <input type="text" id="node-input-destinationPath" placeholder="/path/to/destination_or_new_name">
+    </div>
+    <div class="form-tips">
+        <p><b>Tip:</b> Specify the full source path of the file/directory to move and the full destination path (which can be a new name or a target directory).</p>
+        <p>Inputs can also be provided via <code>msg.sourcePath</code>, <code>msg.destinationPath</code>, or an object in <code>msg.payload</code> (e.g., <code>msg.payload.sourcePath</code>).</p>
+        <p>If <code>Source Path</code> in the editor is empty and <code>msg.payload</code> is a string, that string will be used as the source path.</p>
+    </div>
+</script>
+
+<script type="text/html" data-help-name="puter-mv">
+    <p>Moves or renames a file or directory in Puter cloud storage using the Puter CLI <code>mv</code> command.</p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">string | object</span></dt>
+        <dd>
+            If <code>msg.payload</code> is a string and the node's <code>Source Path</code> is not configured, it's used as the <code>sourcePath</code>.
+            If <code>msg.payload</code> is an object, it can contain:
+            <ul>
+                <li><code>sourcePath</code> (string): Overrides the configured <b>Source Path</b>.</li>
+                <li><code>destinationPath</code> (string): Overrides the configured <b>Destination Path</b>.</li>
+            </ul>
+        </dd>
+        <dt class="optional">sourcePath <span class="property-type">string</span></dt>
+        <dd>Overrides the configured <b>Source Path</b> if <code>msg.payload</code> is not an object containing <code>sourcePath</code>.</dd>
+        <dt class="optional">destinationPath <span class="property-type">string</span></dt>
+        <dd>Overrides the configured <b>Destination Path</b> if <code>msg.payload</code> is not an object containing <code>destinationPath</code>.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>
+            An object containing the results of the operation.
+            <ul>
+                <li><b>success</b>: (boolean) True if the operation was successful, false otherwise.</li>
+                <li><b>command</b>: (string) The command executed (<code>mv</code>).</li>
+                <li><b>sourcePath</b>: (string) The source path used.</li>
+                <li><b>destinationPath</b>: (string) The destination path used.</li>
+                <li><b>stdout</b>: (string) The standard output from the Puter CLI command, if any.</li>
+                <li><b>stderr</b>: (string) The standard error from the Puter CLI command, if any.</li>
+                <li><b>error</b>: (string) An error message if the operation failed. Included only if <code>success</code> is false.</li>
+            </ul>
+        </dd>
+    </dl>
+
+    <h3>Details</h3>
+    <p>This node uses the <code>puter mv &lt;sourcePath&gt; &lt;destinationPath&gt;</code> command to move or rename files/directories in your Puter cloud storage.</p>
+    <p>Both <b>Source Path</b> and <b>Destination Path</b> must be specified either in the node's configuration or via incoming message properties.</p>
+    <p>You must configure valid Puter authentication using the <b>Puter Auth</b> configuration node.</p>
+    <p>Requires the Puter CLI to be installed and accessible in the environment where Node-RED is running.</p>
+</script>
